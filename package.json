@@ -1,0 +1,9 @@
+{
+  "name": "task-app",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": "https://github.com/MrClockster/task-app",
+  "author": "Miguel Panuto",
+  "license": "MIT",
+  "private": true
+}
