@@ -5,5 +5,8 @@
   "repository": "https://github.com/MrClockster/task-app",
   "author": "Miguel Panuto",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "mongodb": "^3.3.2"
+  }
 }
