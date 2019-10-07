@@ -31,6 +31,19 @@ router.post('/users', async (req, res) =>
     
 });
 
+router.post('/users/login', async(req,res) =>
+{
+    try
+    {
+        const user = await User.findByCrecentials(req.body.email, req.body.password);
+        res.send(user);
+    }
+    catch(e)
+    {
+        res.status(400).send();
+    }
+});
+
 router.get('/users/:id', async (req, res) =>
 {
     const _id = req.params.id;
@@ -60,7 +73,12 @@ router.patch('/users/:id', async (req, res) =>
 
     try
     {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const user = await User.findById(req.params.id);
+
+        updates.forEach((update) => user[update] = req.body[update]);
+
+        await user.save();
+        
         if(!user)
         {
             return res.status(404).send({ error: 'User not founded' })

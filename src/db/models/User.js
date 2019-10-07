@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
-const User = mongoose.model('User', //If there is none table called 'user', the first data will create on the database
-{
+const userSchema = new mongoose.Schema({
     name:
     {
         type: String, //The program will only accept the string type
@@ -13,6 +13,7 @@ const User = mongoose.model('User', //If there is none table called 'user', the 
     email:
     {
         type: String,
+        unique: true, //Just one email per user
         require: true,
         validate(value) //That is a function, that will validade something
         {
@@ -48,5 +49,37 @@ const User = mongoose.model('User', //If there is none table called 'user', the 
         }
     }
 });
+
+userSchema.statics.findByCredentials = async () =>
+{
+    const user = await User.findOne({ email });
+    if(!user)
+    {
+        throw new Error('Unable to login');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if(!isMatch)
+    {
+        throw new Error('Unable to login');
+    }
+
+    return user;
+}
+
+userSchema.pre('save', async function (next)
+{
+    const user = this;
+
+    if (user.isModified('password'))
+    {
+        user.password = await bcrypt.hash(user.password, 8);
+    }
+
+    next();
+});
+
+const User = mongoose.model('User', userSchema);//If there is none table called 'user', the first data will create on the database
 
 module.exports = User;
