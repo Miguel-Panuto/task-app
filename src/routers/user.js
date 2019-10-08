@@ -1,6 +1,6 @@
 const express = require('express');
 const sharp = require('sharp')
-const User = require('../db/models/User');
+const User = require('../models/User');
 const auth = require('../middleware/auth')
 const upload = require('../middleware/upload')
 const router = new express.Router();
