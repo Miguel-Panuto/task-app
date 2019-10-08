@@ -1,8 +1,10 @@
 const express = require('express');
-const sharp = require('sharp')
+const sharp = require('sharp');
 const User = require('../models/User');
-const auth = require('../middleware/auth')
-const upload = require('../middleware/upload')
+const auth = require('../middleware/auth');
+const upload = require('../middleware/upload');
+const { sendWelcomeEmail, sendGoodbyeEmail } = require('../emails/account');
+
 const router = new express.Router();
 
 router.get('/users/me', auth ,async (req, res) =>
@@ -17,6 +19,7 @@ router.post('/users', async (req, res) =>
 
     {
         await user.save();
+        sendWelcomeEmail(user.email, user.name);
         const token = await user.genarateAuthToken();
         res.status(201).send({ user, token });
     }
@@ -123,11 +126,12 @@ router.patch('/users/me', auth, async (req, res) =>
     }
 });
 
-router.delete('/users/me', auth,async (req, res) =>
+router.delete('/users/me', auth, async (req, res) =>
 {
     try
     {
-        await req.user.remove();
+        sendGoodbyeEmail(req.user.email, req.user.name);
+        await User.findByIdAndDelete(req.user._id);
         res.send();
     }
     catch(e)

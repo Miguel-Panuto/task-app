@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
         type: String, //The program will only accept the string type
         required: true, //If does not put anything, will throw a error
         trim: true, //That will takes out the blank spaces between the string (not in the center)
-        lowercase: true, //That will put everthing in lowercase
+        //lowercase: true, //That will put everthing in lowercase
     },
     email:
     {
